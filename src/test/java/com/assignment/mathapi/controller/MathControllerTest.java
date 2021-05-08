@@ -79,5 +79,43 @@ public class MathControllerTest {
         Assertions.assertEquals("4.6",  String.format("%.1f", result));
 
     }
-   
+    @Test
+    public void MedianTest() throws Exception {
+
+        JsonMapper jsonMapper = new JsonMapper();
+        InputRequest inputRequest = jsonMapper.readValue(new File("./src/test/resources/input2.json"), InputRequest.class);
+
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
+                .post("/math-api/median")
+                .content(jsonMapper.writeValueAsString(inputRequest))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        OutputResponse2 outputResponse2 = jsonMapper.readValue(mvcResult.getResponse().getContentAsString(), OutputResponse2.class);
+        Double result = outputResponse2.getResult();
+        Assertions.assertEquals("4.5",  String.format("%.1f", result));
+
+    }
+
+    @Test
+    public void percentileTest() throws Exception {
+
+        JsonMapper jsonMapper = new JsonMapper();
+        InputRequest inputRequest = jsonMapper.readValue(new File("./src/test/resources/input2.json"), InputRequest.class);
+        int value=6;
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
+                .post("/math-api/percentile/"+value)
+                .content(jsonMapper.writeValueAsString(inputRequest))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        OutputResponse2 outputResponse2 = jsonMapper.readValue(mvcResult.getResponse().getContentAsString(), OutputResponse2.class);
+        Double result = outputResponse2.getResult();
+        Assertions.assertEquals("62.5",String.format("%.1f",result));
+
+    }
 }
